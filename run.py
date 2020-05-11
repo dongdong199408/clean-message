@@ -154,7 +154,7 @@ def get_auth_token():
 def get_resource():
     return jsonify({'data': 'Hello, %s!' % g.user.username})
 
-@app.route('/clean_message/', methods=['POST', 'GET'])
+@app.route('/clean_message', methods=['POST', 'GET'])
 #@auth.login_required
 def clean_sentence():
     try:
@@ -178,35 +178,34 @@ def clean_sentence():
     if not re.compile(u'[\u4e00-\u9fa5]|[a-zA-Z0-9]+').search(question):
         print('无汉语或者无英语语言')
         probability=0.0
-        is_cean = True if probability > 0.45 else False
-        result = {'code': 1, 'result': {'probability': str(probability), 'is_clean': is_cean}}
+        is_effective = True if probability > 0.45 else False
+        result = {'code': 1, 'result': {'probability': str(probability), 'is_effective': is_effective}}
         return jsonify(result)
     elif len(re.findall('\[', question)) > 4 and len(re.findall('\]', question)) > 4 or len(
             re.findall('[a-zA-Z]', question)) > 8:
         print('表情字符和英文过多！')
         probability = 0.0
-        is_cean = True if probability > 0.45 else False
-        result = {'code': 1, 'result': {'probability': str(probability), 'is_clean': is_cean}}
+        is_effective = True if probability > 0.45 else False
+        result = {'code': 1, 'result': {'probability': str(probability), 'is_effective': is_effective}}
         return jsonify(result)
     #定义又意义的字段
     elif re.compile(pre.need_message).match(question):
         print('有效字段！')
         probability = 1.0
-        is_cean = True if probability > 0.45 else False
-        result = {'code': 1, 'result': {'probability': str(probability), 'is_clean': is_cean}}
+        is_effective = True if probability > 0.45 else False
+        result = {'code': 1, 'result': {'probability': str(probability), 'is_effective': is_effective}}
         return jsonify(result)
     else:
         pass #转入下轮
-
     sentence = question.strip()
     clean = P.clean_data(sentence)
     if clean == sentence:
         probability=P.predict(clean)[0][1]
     else :
         probability = 0 #敏感词汇，筛除
-    is_cean = True if probability > 0.45 else False
+    is_effective = True if probability > 0.45 else False
 
-    result = {'code': 0, 'result': {'probability': str(probability), 'is_clean': is_cean}}
+    result = {'code': 0, 'result': {'probability': str(probability), 'is_effective': is_effective}}
     return jsonify(result)
 
 if __name__ == '__main__':
@@ -215,3 +214,4 @@ if __name__ == '__main__':
     P = Predict()
     P.watch_updates()
     app.run(host='0.0.0.0', port=5000, debug=True)
+

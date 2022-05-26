@@ -6,7 +6,7 @@ pandas==0.24.2
 Flask==1.0.2
 numpy==1.18.1
 Flask_HTTPAuth==3.2.3
-tensorflow==1.10.0
+tensorflow==2.7.2
 itsdangerous==0.24
 six==1.12.0
 gevent==1.4.0
